@@ -30,7 +30,7 @@ services:
       - accounts-service
 
   ui-service:
-    build: ./ui_service
+    build: ./ui-service
     image: ui-service
     ports:
       - "8083:8083"
