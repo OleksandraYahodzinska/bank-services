@@ -10,6 +10,7 @@ services:
       - "5432:5432"
 
   accounts-service:
+    build: ./accounts_service
     image: accounts-service
     ports:
       - "8081:8081"
@@ -21,6 +22,7 @@ services:
       - accounts-db
 
   payment-service:
+    build: ./payment_service
     image: payment-service
     ports:
       - "8082:8082"
@@ -28,6 +30,7 @@ services:
       - accounts-service
 
   ui-service:
+    build: ./ui_service
     image: ui-service
     ports:
       - "8083:8083"
