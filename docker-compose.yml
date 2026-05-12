@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  accounts-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: bank_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+
+  accounts-service:
+    image: accounts-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://accounts-db:5432/bank_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+    depends_on:
+      - accounts-db
+
+  payment-service:
+    image: payment-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - accounts-service
+
+  ui-service:
+    image: ui-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - payment-service
