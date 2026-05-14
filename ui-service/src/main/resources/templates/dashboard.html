@@ -32,7 +32,7 @@
             <div class="card">
                 <h3>👤 Створити Клієнта</h3>
                 <form th:action="@{/bank/clients/create}" method="post" class="input-group">
-                    <input type="number" name="id" placeholder="ID (напр. 101)" required>
+                    <input type="number" name="id" placeholder="ID" required>
                     <input type="text" name="name" placeholder="Ім'я" required>
                     <input type="text" name="surname" placeholder="Прізвище" required>
                     <button type="submit">Зареєструвати клієнта</button>
@@ -75,18 +75,14 @@
                 </td>
 
                 <td>
-                    <span th:if="${client.accountType != null}"
-                          th:text="${client.accountType}"
-                          th:class="${client.accountType == 'SAVINGS' ? 'badge badge-savings' : 'badge badge-credit'}">
+                    <span th:if="${client != null}"
+                          th:text="${client.accountType ?: 'Active'}"
+                          th:class="${client.accountType == 'CREDIT' ? 'badge badge-credit' : 'badge badge-savings'}">
                     </span>
-                    <span th:if="${client.accountType == null}" class="badge badge-empty">Відсутній</span>
                 </td>
 
                 <td class="balance-cell">
-                    <span th:if="${client.balance != null}">
-                        $ <span th:text="${#numbers.formatDecimal(client.balance, 1, 2)}"></span>
-                    </span>
-                    <span th:if="${client.balance == null}" style="color: #cbd5e1; font-weight: 400;">—</span>
+                    $ <span th:text="${client.balance != null ? #numbers.formatDecimal(client.balance, 1, 2) : '0.00'}">0.00</span>
                 </td>
 
                 <td th:if="${isAdmin}">
