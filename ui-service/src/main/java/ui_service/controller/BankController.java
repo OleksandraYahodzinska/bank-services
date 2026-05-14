@@ -30,7 +30,7 @@ public class BankController {
         try {
             model.addAttribute("clients", accountClient.getAllClients());
         } catch (Exception e) {
-            model.addAttribute("message", "❌ Error: Connection to Accounts Service failed.");
+            model.addAttribute("message", "❌ Connection error: Accounts Service is offline.");
         }
         return "dashboard";
     }
@@ -84,7 +84,7 @@ public class BankController {
                 accountClient.deleteClient(id);
                 ra.addFlashAttribute("message", "✅ Client deleted successfully.");
             } catch (Exception e) {
-                ra.addFlashAttribute("message", "❌ Cannot delete: Client has active accounts.");
+                ra.addFlashAttribute("message", "❌ Cannot delete: Client might have active accounts or connection failed.");
             }
         }
         return "redirect:/bank/dashboard";
@@ -99,7 +99,7 @@ public class BankController {
             String result = paymentClient.transfer(fromId, toId, amount);
             ra.addFlashAttribute("message", "✅ " + result);
         } catch (Exception e) {
-            ra.addFlashAttribute("message", "❌ Transaction failed: Payment service unavailable.");
+            ra.addFlashAttribute("message", "❌ Transaction failed: Check if IDs exist and balance is sufficient.");
         }
         return "redirect:/bank/dashboard";
     }
