@@ -66,9 +66,9 @@
                 <td th:text="${client.name + ' ' + client.surname}"></td>
                 <td><span class="badge badge-savings">Active</span></td>
                 <td th:if="${isAdmin}">
-                    <form th:action="@{/bank/clients/delete}" method="post">
+                    <form th:action="@{/bank/clients/delete}" method="post" style="display:inline;">
                         <input type="hidden" name="id" th:value="${client.id}"/>
-                        <button type="submit" class="btn-delete">Видалити</button>
+                        <button type="submit" class="btn-delete">Delete</button>
                     </form>
                 </td>
             </tr>
