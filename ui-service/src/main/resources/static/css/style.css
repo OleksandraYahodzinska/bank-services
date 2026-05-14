@@ -58,7 +58,7 @@ input, select {
     transition: 0.3s;
 }
 
-input:focus { border-color: var(--primary); outline: none; background-color: #fff; }
+input:focus { border-color: var(--primary); outline: none; }
 
 button {
     cursor: pointer;
@@ -77,14 +77,12 @@ button:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
 table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
 
-th { padding: 10px 15px; text-align: left; color: var(--gray); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+th { padding: 10px 15px; text-align: left; color: var(--gray); font-size: 0.8rem; text-transform: uppercase; }
 
 td { padding: 15px; background: var(--white); border: none; vertical-align: middle; }
 
 td:first-child { border-radius: 12px 0 0 12px; font-weight: 800; color: var(--primary); }
 td:last-child { border-radius: 0 12px 12px 0; }
-
-.balance-cell { font-family: 'Inter', monospace; font-weight: 700; color: var(--dark); font-size: 1.1rem; }
 
 .badge {
     padding: 6px 12px;
@@ -92,12 +90,9 @@ td:last-child { border-radius: 0 12px 12px 0; }
     font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
-    display: inline-block;
+    background: #dcfce7;
+    color: #15803d;
 }
-
-.badge-savings { background: #dcfce7; color: #15803d; }
-.badge-credit { background: #fee2e2; color: #b91c1c; }
-.badge-empty { background: #f1f5f9; color: #94a3b8; font-style: italic; }
 
 .auth-section { max-width: 400px; margin: 0 auto 30px; }
 

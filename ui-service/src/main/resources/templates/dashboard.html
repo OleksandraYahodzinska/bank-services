@@ -10,7 +10,7 @@
 
 <header>
     <h1>💎 Yahodzinska Global Finance</h1>
-    <p>Мікросервісна банківська система наступного покоління</p>
+    <p>Мікросервісна банківська система</p>
 </header>
 
 <div class="container">
@@ -25,68 +25,48 @@
 
     <div th:if="${isAdmin}">
         <div style="text-align: right; margin-bottom: 20px;">
-            <a th:href="@{/bank/logout}" style="color: var(--danger); text-decoration: none; font-weight: bold; font-size: 0.9rem;">🚪 Завершити сесію адміна</a>
+            <a th:href="@{/bank/logout}" style="color: var(--danger); text-decoration: none; font-weight: bold;">🚪 Вийти</a>
         </div>
 
         <div class="form-grid">
             <div class="card">
-                <h3>👤 Створити Клієнта</h3>
+                <h3>👤 Новий Клієнт</h3>
                 <form th:action="@{/bank/clients/create}" method="post" class="input-group">
                     <input type="number" name="id" placeholder="ID" required>
                     <input type="text" name="name" placeholder="Ім'я" required>
                     <input type="text" name="surname" placeholder="Прізвище" required>
-                    <button type="submit">Зареєструвати клієнта</button>
+                    <button type="submit">Створити</button>
                 </form>
             </div>
-
             <div class="card">
-                <h3>💳 Відкрити Рахунок</h3>
+                <h3>💳 Новий Рахунок</h3>
                 <form th:action="@{/bank/accounts/create}" method="post" class="input-group">
                     <input type="number" name="clientId" placeholder="ID власника" required>
-                    <select name="type">
-                        <option value="SAVINGS">🌱 Ощадний (Savings)</option>
-                        <option value="CREDIT">💰 Кредитний (Credit)</option>
-                    </select>
-                    <input type="number" step="0.01" name="balance" placeholder="Сума поповнення ($)" required>
-                    <button type="submit" style="background: var(--success);">Створити та активувати</button>
+                    <input type="number" step="0.01" name="balance" placeholder="Сума ($)" required>
+                    <button type="submit" style="background: var(--success);">Активувати</button>
                 </form>
             </div>
         </div>
     </div>
 
     <div class="card">
-        <h3>📊 Реєстр Активних Рахунків</h3>
+        <h3>📊 Реєстр Клієнтів</h3>
         <table>
             <thead>
             <tr>
                 <th>ID</th>
                 <th>Клієнт</th>
-                <th>Тип рахунку</th>
-                <th>Доступний баланс</th>
-                <th th:if="${isAdmin}">Управління</th>
+                <th>Статус</th>
+                <th th:if="${isAdmin}">Дії</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="client : ${clients}">
                 <td th:text="${client.id}"></td>
-                <td>
-                    <div th:text="${client.name + ' ' + client.surname}" style="font-weight: 600;"></div>
-                    <small style="color: var(--gray); font-size: 0.7rem;">Verified Customer</small>
-                </td>
-
-                <td>
-                    <span th:if="${client != null}"
-                          th:text="${client.accountType ?: 'Active'}"
-                          th:class="${client.accountType == 'CREDIT' ? 'badge badge-credit' : 'badge badge-savings'}">
-                    </span>
-                </td>
-
-                <td class="balance-cell">
-                    $ <span th:text="${client.balance != null ? #numbers.formatDecimal(client.balance, 1, 2) : '0.00'}">0.00</span>
-                </td>
-
+                <td th:text="${client.name + ' ' + client.surname}"></td>
+                <td><span class="badge badge-savings">Active</span></td>
                 <td th:if="${isAdmin}">
-                    <form th:action="@{/bank/clients/delete}" method="post" style="display:inline;">
+                    <form th:action="@{/bank/clients/delete}" method="post">
                         <input type="hidden" name="id" th:value="${client.id}"/>
                         <button type="submit" class="btn-delete">Видалити</button>
                     </form>
@@ -96,20 +76,16 @@
         </table>
     </div>
 
-    <div class="card" style="margin-top: 30px; background: var(--dark); color: white;">
-        <h3 style="color: var(--success);">💸 Швидкий Міжбанківський Трансфер</h3>
-        <form th:action="@{/bank/transfer}" method="post" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px;">
-            <input type="number" name="fromId" placeholder="Від кого (ID)" required style="background: #1e293b; color: white; border: 1px solid #334155;">
-            <input type="number" name="toId" placeholder="Кому (ID)" required style="background: #1e293b; color: white; border: 1px solid #334155;">
-            <input type="number" step="0.01" name="amount" placeholder="Сума ($)" required style="background: #1e293b; color: white; border: 1px solid #334155;">
-            <button type="submit" style="background: var(--success); color: var(--dark);">Надіслати кошти</button>
+    <div class="card" style="margin-top: 30px; background: #0f172a; color: white;">
+        <h3 style="color: var(--success);">💸 Переказ</h3>
+        <form th:action="@{/bank/transfer}" method="post" style="display: flex; gap: 10px;">
+            <input type="number" name="fromId" placeholder="Від кого ID" required>
+            <input type="number" name="toId" placeholder="Кому ID" required>
+            <input type="number" step="0.01" name="amount" placeholder="Сума" required>
+            <button type="submit" style="background: var(--success); color: #0f172a;">Надіслати</button>
         </form>
-
-        <div th:if="${message}" class="message">
-            <span th:text="${message}"></span>
-        </div>
+        <div th:if="${message}" class="message" th:text="${message}"></div>
     </div>
 </div>
-
 </body>
 </html>
