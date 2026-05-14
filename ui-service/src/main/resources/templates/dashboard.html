@@ -2,75 +2,96 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Polytechnic AI Bank Management</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background-color: #f4f7f6; color: #333; }
-        h1 { color: #2c3e50; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-        th { background-color: #3498db; color: white; }
-        tr:nth-child(even) { background-color: #f2f2f2; }
-        .form-section { background: #fff; padding: 25px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h3 { margin-top: 0; color: #2980b9; }
-        input { padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; width: 200px; }
-        button { cursor: pointer; background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; transition: 0.3s; }
-        button:hover { background: #219150; }
-        .btn-delete { background: #e74c3c; }
-        .btn-delete:hover { background: #c0392b; }
-        .message { padding: 10px; border-radius: 4px; margin-top: 10px; display: inline-block; }
-        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    </style>
+    <title>Sasha Digital Bank | Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
-<h1>🏦 Bank Management System</h1>
 
-<div class="form-section">
-    <h3>➕ Create New Client</h3>
-    <form th:action="@{/bank/clients/create}" method="post">
-        <input type="number" name="id" placeholder="ID (e.g. 101)" required>
-        <input type="text" name="name" placeholder="First Name" required>
-        <input type="text" name="surname" placeholder="Last Name" required>
-        <button type="submit">Create Client</button>
-    </form>
-</div>
+<header>
+    <h1>💎 Yahodzinska Global Finance</h1>
+    <p>Система управління банком на базі мікросервісів</p>
+</header>
 
-<div class="form-section">
-    <h3>👥 Registered Clients</h3>
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="client : ${clients}">
-            <td th:text="${client.id}"></td>
-            <td th:text="${client.name}"></td>
-            <td th:text="${client.surname}"></td>
-            <td>
-                <form th:action="@{/bank/clients/delete}" method="post" style="display:inline;">
-                    <input type="hidden" name="id" th:value="${client.id}"/>
-                    <button type="submit" class="btn-delete">Delete</button>
+<div class="container">
+
+    <div class="auth-section card" th:if="${!isAdmin}">
+        <h3>🔑 Вхід адміністратора</h3>
+        <form th:action="@{/bank/auth}" method="post" class="input-group">
+            <input type="password" name="apiKey" placeholder="Введіть API-ключ" required>
+            <button type="submit">Увійти в систему</button>
+        </form>
+    </div>
+
+    <div th:if="${isAdmin}">
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a th:href="@{/bank/logout}" style="color: var(--danger); text-decoration: none; font-weight: bold;">❌ Вийти з адмін-панелі</a>
+        </div>
+
+        <div class="form-grid">
+            <div class="card">
+                <h3>👤 Реєстрація Клієнта</h3>
+                <form th:action="@{/bank/clients/create}" method="post" class="input-group">
+                    <input type="number" name="id" placeholder="ID клієнта" required>
+                    <input type="text" name="name" placeholder="Ім'я" required>
+                    <input type="text" name="surname" placeholder="Прізвище" required>
+                    <button type="submit">Додати клієнта</button>
                 </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+            </div>
 
-<div class="form-section">
-    <h3>💸 Quick Fund Transfer</h3>
-    <form th:action="@{/bank/transfer}" method="post">
-        <input type="number" name="fromId" placeholder="Sender ID" required>
-        <input type="number" name="toId" placeholder="Receiver ID" required>
-        <input type="number" step="0.01" name="amount" placeholder="Amount ($)" required>
-        <button type="submit" style="background: #3498db;">Transfer Funds</button>
-    </form>
-    <div th:if="${message}" class="message success">
-        <span th:text="${message}"></span>
+            <div class="card">
+                <h3>💳 Новий Рахунок</h3>
+                <form th:action="@{/bank/accounts/create}" method="post" class="input-group">
+                    <input type="number" name="clientId" placeholder="ID власника" required>
+                    <select name="type">
+                        <option value="SAVINGS">🌱 Savings Account</option>
+                        <option value="CREDIT">💰 Credit Account</option>
+                    </select>
+                    <input type="number" step="0.01" name="balance" placeholder="Початковий баланс $" required>
+                    <button type="submit" style="background: var(--success);">Відкрити рахунок</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📊 Реєстр Клієнтів</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Клієнт</th>
+                <th>Тип</th>
+                <th th:if="${isAdmin}">Дії</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="client : ${clients}">
+                <td th:text="${client.id}"></td>
+                <td th:text="${client.name + ' ' + client.surname}"></td>
+                <td><span class="badge badge-savings">Active</span></td>
+                <td th:if="${isAdmin}">
+                    <form th:action="@{/bank/clients/delete}" method="post" style="display:inline;">
+                        <input type="hidden" name="id" th:value="${client.id}"/>
+                        <button type="submit" class="btn-delete">Видалити</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card" style="margin-top: 30px; background: var(--dark); color: white;">
+        <h3 style="color: var(--success);">💸 Швидкий трансфер</h3>
+        <form th:action="@{/bank/transfer}" method="post" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px;">
+            <input type="number" name="fromId" placeholder="ID відправника" required>
+            <input type="number" name="toId" placeholder="ID отримувача" required>
+            <input type="number" step="0.01" name="amount" placeholder="Сума $" required>
+            <button type="submit" style="background: var(--success); color: var(--dark);">Надіслати</button>
+        </form>
+        <div th:if="${message}" class="message">
+            <span th:text="${message}"></span>
+        </div>
     </div>
 </div>
 
