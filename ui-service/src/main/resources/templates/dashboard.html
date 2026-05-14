@@ -10,7 +10,7 @@
 
 <header>
     <h1>💎 Yahodzinska Global Finance</h1>
-    <p>Інтелектуальна мікросервісна банківська екосистема</p>
+    <p>Мікросервісна банківська система наступного покоління</p>
 </header>
 
 <div class="container">
@@ -18,37 +18,37 @@
     <div class="auth-section card" th:if="${!isAdmin}">
         <h3>🔑 Вхід адміністратора</h3>
         <form th:action="@{/bank/auth}" method="post" class="input-group">
-            <input type="password" name="apiKey" placeholder="Введіть API-ключ" required>
-            <button type="submit">Авторизуватись</button>
+            <input type="password" name="apiKey" placeholder="Введіть секретний API-ключ" required>
+            <button type="submit">Увійти</button>
         </form>
     </div>
 
     <div th:if="${isAdmin}">
         <div style="text-align: right; margin-bottom: 20px;">
-            <a th:href="@{/bank/logout}" style="color: var(--danger); text-decoration: none; font-weight: bold; font-size: 0.9rem;">🚪 Вийти з сесії</a>
+            <a th:href="@{/bank/logout}" style="color: var(--danger); text-decoration: none; font-weight: bold; font-size: 0.9rem;">🚪 Завершити сесію адміна</a>
         </div>
 
         <div class="form-grid">
             <div class="card">
-                <h3>👤 Створити Профіль Клієнта</h3>
+                <h3>👤 Створити Клієнта</h3>
                 <form th:action="@{/bank/clients/create}" method="post" class="input-group">
-                    <input type="number" name="id" placeholder="ID" required>
+                    <input type="number" name="id" placeholder="ID (напр. 101)" required>
                     <input type="text" name="name" placeholder="Ім'я" required>
                     <input type="text" name="surname" placeholder="Прізвище" required>
-                    <button type="submit">Зареєструвати</button>
+                    <button type="submit">Зареєструвати клієнта</button>
                 </form>
             </div>
 
             <div class="card">
-                <h3>💳 Відкрити Новий Рахунок</h3>
+                <h3>💳 Відкрити Рахунок</h3>
                 <form th:action="@{/bank/accounts/create}" method="post" class="input-group">
-                    <input type="number" name="clientId" placeholder="ID Власника" required>
+                    <input type="number" name="clientId" placeholder="ID власника" required>
                     <select name="type">
-                        <option value="SAVINGS">🌱 Сейвінгс (Savings)</option>
-                        <option value="CREDIT">🔥 Кредитний (Credit)</option>
+                        <option value="SAVINGS">🌱 Ощадний (Savings)</option>
+                        <option value="CREDIT">💰 Кредитний (Credit)</option>
                     </select>
-                    <input type="number" step="0.01" name="balance" placeholder="Початковий внесок ($)" required>
-                    <button type="submit" style="background: #22c55e;">Активувати Рахунок</button>
+                    <input type="number" step="0.01" name="balance" placeholder="Сума поповнення ($)" required>
+                    <button type="submit" style="background: var(--success);">Створити та активувати</button>
                 </form>
             </div>
         </div>
@@ -61,8 +61,8 @@
             <tr>
                 <th>ID</th>
                 <th>Клієнт</th>
-                <th>Тип</th>
-                <th>Баланс</th>
+                <th>Тип рахунку</th>
+                <th>Доступний баланс</th>
                 <th th:if="${isAdmin}">Управління</th>
             </tr>
             </thead>
@@ -71,14 +71,24 @@
                 <td th:text="${client.id}"></td>
                 <td>
                     <div th:text="${client.name + ' ' + client.surname}" style="font-weight: 600;"></div>
-                    <small style="color: #64748b; font-size: 0.7rem;">Verified Account</small>
+                    <small style="color: var(--gray); font-size: 0.7rem;">Verified Customer</small>
                 </td>
+
                 <td>
-                    <span class="badge badge-savings">Savings</span>
+                    <span th:if="${client.accountType != null}"
+                          th:text="${client.accountType}"
+                          th:class="${client.accountType == 'SAVINGS' ? 'badge badge-savings' : 'badge badge-credit'}">
+                    </span>
+                    <span th:if="${client.accountType == null}" class="badge badge-empty">Відсутній</span>
                 </td>
+
                 <td class="balance-cell">
-                    $ <span th:text="${#numbers.formatDecimal(1500.00, 1, 2)}">0.00</span>
+                    <span th:if="${client.balance != null}">
+                        $ <span th:text="${#numbers.formatDecimal(client.balance, 1, 2)}"></span>
+                    </span>
+                    <span th:if="${client.balance == null}" style="color: #cbd5e1; font-weight: 400;">—</span>
                 </td>
+
                 <td th:if="${isAdmin}">
                     <form th:action="@{/bank/clients/delete}" method="post" style="display:inline;">
                         <input type="hidden" name="id" th:value="${client.id}"/>
@@ -90,16 +100,17 @@
         </table>
     </div>
 
-    <div class="card" style="margin-top: 30px; background: #0f172a; color: white;">
-        <h3 style="color: var(--success);">💸 Миттєвий Міжбанківський Переказ</h3>
+    <div class="card" style="margin-top: 30px; background: var(--dark); color: white;">
+        <h3 style="color: var(--success);">💸 Швидкий Міжбанківський Трансфер</h3>
         <form th:action="@{/bank/transfer}" method="post" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px;">
-            <input type="number" name="fromId" placeholder="ID Відправника" required style="background: #1e293b; color: white; border: 1px solid #334155;">
-            <input type="number" name="toId" placeholder="ID Отримувача" required style="background: #1e293b; color: white; border: 1px solid #334155;">
+            <input type="number" name="fromId" placeholder="Від кого (ID)" required style="background: #1e293b; color: white; border: 1px solid #334155;">
+            <input type="number" name="toId" placeholder="Кому (ID)" required style="background: #1e293b; color: white; border: 1px solid #334155;">
             <input type="number" step="0.01" name="amount" placeholder="Сума ($)" required style="background: #1e293b; color: white; border: 1px solid #334155;">
-            <button type="submit" style="background: var(--success); color: #0f172a;">Виконати</button>
+            <button type="submit" style="background: var(--success); color: var(--dark);">Надіслати кошти</button>
         </form>
+
         <div th:if="${message}" class="message">
-            ✅ <span th:text="${message}"></span>
+            <span th:text="${message}"></span>
         </div>
     </div>
 </div>
