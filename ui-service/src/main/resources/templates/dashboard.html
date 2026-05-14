@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Sasha Digital Bank | Admin Panel</title>
+    <title>Yahodzinska Digital Bank</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
@@ -10,7 +10,7 @@
 
 <header>
     <h1>💎 Yahodzinska Global Finance</h1>
-    <p>Система управління банком на базі мікросервісів</p>
+    <p>Інтелектуальна мікросервісна банківська екосистема</p>
 </header>
 
 <div class="container">
@@ -19,57 +19,66 @@
         <h3>🔑 Вхід адміністратора</h3>
         <form th:action="@{/bank/auth}" method="post" class="input-group">
             <input type="password" name="apiKey" placeholder="Введіть API-ключ" required>
-            <button type="submit">Увійти в систему</button>
+            <button type="submit">Авторизуватись</button>
         </form>
     </div>
 
     <div th:if="${isAdmin}">
         <div style="text-align: right; margin-bottom: 20px;">
-            <a th:href="@{/bank/logout}" style="color: var(--danger); text-decoration: none; font-weight: bold;">❌ Вийти з адмін-панелі</a>
+            <a th:href="@{/bank/logout}" style="color: var(--danger); text-decoration: none; font-weight: bold; font-size: 0.9rem;">🚪 Вийти з сесії</a>
         </div>
 
         <div class="form-grid">
             <div class="card">
-                <h3>👤 Реєстрація Клієнта</h3>
+                <h3>👤 Створити Профіль Клієнта</h3>
                 <form th:action="@{/bank/clients/create}" method="post" class="input-group">
-                    <input type="number" name="id" placeholder="ID клієнта" required>
+                    <input type="number" name="id" placeholder="ID" required>
                     <input type="text" name="name" placeholder="Ім'я" required>
                     <input type="text" name="surname" placeholder="Прізвище" required>
-                    <button type="submit">Додати клієнта</button>
+                    <button type="submit">Зареєструвати</button>
                 </form>
             </div>
 
             <div class="card">
-                <h3>💳 Новий Рахунок</h3>
+                <h3>💳 Відкрити Новий Рахунок</h3>
                 <form th:action="@{/bank/accounts/create}" method="post" class="input-group">
-                    <input type="number" name="clientId" placeholder="ID власника" required>
+                    <input type="number" name="clientId" placeholder="ID Власника" required>
                     <select name="type">
-                        <option value="SAVINGS">🌱 Savings Account</option>
-                        <option value="CREDIT">💰 Credit Account</option>
+                        <option value="SAVINGS">🌱 Сейвінгс (Savings)</option>
+                        <option value="CREDIT">🔥 Кредитний (Credit)</option>
                     </select>
-                    <input type="number" step="0.01" name="balance" placeholder="Початковий баланс $" required>
-                    <button type="submit" style="background: var(--success);">Відкрити рахунок</button>
+                    <input type="number" step="0.01" name="balance" placeholder="Початковий внесок ($)" required>
+                    <button type="submit" style="background: #22c55e;">Активувати Рахунок</button>
                 </form>
             </div>
         </div>
     </div>
 
     <div class="card">
-        <h3>📊 Реєстр Клієнтів</h3>
+        <h3>📊 Реєстр Активних Рахунків</h3>
         <table>
             <thead>
             <tr>
                 <th>ID</th>
                 <th>Клієнт</th>
                 <th>Тип</th>
-                <th th:if="${isAdmin}">Дії</th>
+                <th>Баланс</th>
+                <th th:if="${isAdmin}">Управління</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="client : ${clients}">
                 <td th:text="${client.id}"></td>
-                <td th:text="${client.name + ' ' + client.surname}"></td>
-                <td><span class="badge badge-savings">Active</span></td>
+                <td>
+                    <div th:text="${client.name + ' ' + client.surname}" style="font-weight: 600;"></div>
+                    <small style="color: #64748b; font-size: 0.7rem;">Verified Account</small>
+                </td>
+                <td>
+                    <span class="badge badge-savings">Savings</span>
+                </td>
+                <td class="balance-cell">
+                    $ <span th:text="${#numbers.formatDecimal(1500.00, 1, 2)}">0.00</span>
+                </td>
                 <td th:if="${isAdmin}">
                     <form th:action="@{/bank/clients/delete}" method="post" style="display:inline;">
                         <input type="hidden" name="id" th:value="${client.id}"/>
@@ -81,16 +90,16 @@
         </table>
     </div>
 
-    <div class="card" style="margin-top: 30px; background: var(--dark); color: white;">
-        <h3 style="color: var(--success);">💸 Швидкий трансфер</h3>
+    <div class="card" style="margin-top: 30px; background: #0f172a; color: white;">
+        <h3 style="color: var(--success);">💸 Миттєвий Міжбанківський Переказ</h3>
         <form th:action="@{/bank/transfer}" method="post" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px;">
-            <input type="number" name="fromId" placeholder="ID відправника" required>
-            <input type="number" name="toId" placeholder="ID отримувача" required>
-            <input type="number" step="0.01" name="amount" placeholder="Сума $" required>
-            <button type="submit" style="background: var(--success); color: var(--dark);">Надіслати</button>
+            <input type="number" name="fromId" placeholder="ID Відправника" required style="background: #1e293b; color: white; border: 1px solid #334155;">
+            <input type="number" name="toId" placeholder="ID Отримувача" required style="background: #1e293b; color: white; border: 1px solid #334155;">
+            <input type="number" step="0.01" name="amount" placeholder="Сума ($)" required style="background: #1e293b; color: white; border: 1px solid #334155;">
+            <button type="submit" style="background: var(--success); color: #0f172a;">Виконати</button>
         </form>
         <div th:if="${message}" class="message">
-            <span th:text="${message}"></span>
+            ✅ <span th:text="${message}"></span>
         </div>
     </div>
 </div>
