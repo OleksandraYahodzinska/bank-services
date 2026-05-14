@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ui_service.client.AccountClient;
 import ui_service.client.PaymentClient;
 import ui_service.dto.AccountDTO;
@@ -25,7 +26,12 @@ public class BankController {
     public String dashboard(Model model, HttpSession session) {
         Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
         model.addAttribute("isAdmin", isAdmin != null && isAdmin);
-        model.addAttribute("clients", accountClient.getAllClients());
+
+        try {
+            model.addAttribute("clients", accountClient.getAllClients());
+        } catch (Exception e) {
+            model.addAttribute("message", "❌ Error: Connection to Accounts Service failed.");
+        }
         return "dashboard";
     }
 
@@ -46,25 +52,40 @@ public class BankController {
     }
 
     @PostMapping("/clients/create")
-    public String createClient(@ModelAttribute ClientDTO client, HttpSession session) {
+    public String createClient(@ModelAttribute ClientDTO client, HttpSession session, RedirectAttributes ra) {
         if (Boolean.TRUE.equals(session.getAttribute("isAdmin"))) {
-            accountClient.addClient(client);
+            try {
+                accountClient.addClient(client);
+                ra.addFlashAttribute("message", "✅ Client created successfully!");
+            } catch (Exception e) {
+                ra.addFlashAttribute("message", "❌ Error: Could not create client.");
+            }
         }
         return "redirect:/bank/dashboard";
     }
 
     @PostMapping("/accounts/create")
-    public String createAccount(@ModelAttribute AccountDTO account, HttpSession session) {
+    public String createAccount(@ModelAttribute AccountDTO account, HttpSession session, RedirectAttributes ra) {
         if (Boolean.TRUE.equals(session.getAttribute("isAdmin"))) {
-            accountClient.createAccount(account);
+            try {
+                accountClient.createAccount(account);
+                ra.addFlashAttribute("message", "✅ Account opened successfully!");
+            } catch (Exception e) {
+                ra.addFlashAttribute("message", "❌ Error: Account opening failed.");
+            }
         }
         return "redirect:/bank/dashboard";
     }
 
     @PostMapping("/clients/delete")
-    public String deleteClient(@RequestParam int id, HttpSession session) {
+    public String deleteClient(@RequestParam int id, HttpSession session, RedirectAttributes ra) {
         if (Boolean.TRUE.equals(session.getAttribute("isAdmin"))) {
-            accountClient.deleteClient(id);
+            try {
+                accountClient.deleteClient(id);
+                ra.addFlashAttribute("message", "✅ Client deleted successfully.");
+            } catch (Exception e) {
+                ra.addFlashAttribute("message", "❌ Cannot delete: Client has active accounts.");
+            }
         }
         return "redirect:/bank/dashboard";
     }
@@ -73,9 +94,13 @@ public class BankController {
     public String doTransfer(@RequestParam int fromId,
                              @RequestParam int toId,
                              @RequestParam double amount,
-                             Model model) {
-        String result = paymentClient.transfer(fromId, toId, amount);
-        model.addAttribute("message", result);
+                             RedirectAttributes ra) {
+        try {
+            String result = paymentClient.transfer(fromId, toId, amount);
+            ra.addFlashAttribute("message", "✅ " + result);
+        } catch (Exception e) {
+            ra.addFlashAttribute("message", "❌ Transaction failed: Payment service unavailable.");
+        }
         return "redirect:/bank/dashboard";
     }
 }
