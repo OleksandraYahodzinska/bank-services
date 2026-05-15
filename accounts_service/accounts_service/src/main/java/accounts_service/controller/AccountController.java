@@ -50,15 +50,19 @@ public class AccountController {
 
     @DeleteMapping("/clients/{id}")
     public String deleteClient(@PathVariable int id) {
-        String paymentStatus = paymentClient.getAccountInfo(id);
+        try {
+            String paymentStatus = paymentClient.getAccountInfo(id);
 
-        if (paymentStatus != null && !paymentStatus.contains("Error")) {
-            Account account = bankService.findAccount(id);
-
-            if (account != null && account.getBalance() < 0) {
-                return "Can't delete client: account has a negative balance";
+            if (paymentStatus != null && !paymentStatus.contains("Error")) {
+                Account account = bankService.findAccount(id);
+                if (account != null && account.getBalance() < 0) {
+                    return "Can't delete client: account has a negative balance";
+                }
             }
+        } catch (Exception e) {
+            System.err.println("Info: Payment check skipped for client " + id + " (reason: " + e.getMessage() + ")");
         }
+
         bankService.deleteClient(id);
         return "Client with ID " + id + " was successfully deleted";
     }
