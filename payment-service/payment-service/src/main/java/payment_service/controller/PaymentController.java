@@ -14,10 +14,10 @@ public class PaymentController {
         this.accountClient = accountClient;
     }
 
-    @GetMapping("/transfer")
-    public String transfer(@RequestParam int from, @RequestParam int to, @RequestParam double amount) {
-        AccountDTO source = accountClient.getAccount(from);
-        AccountDTO target = accountClient.getAccount(to);
+    @PostMapping("/transfer")
+    public String transfer(@RequestParam int fromId, @RequestParam int toId, @RequestParam double amount) {
+        AccountDTO source = accountClient.getAccount(fromId);
+        AccountDTO target = accountClient.getAccount(toId);
 
         if (source == null) return "Error: sender account not found";
         if (target == null) return "Error: receiver account not found";
@@ -29,13 +29,13 @@ public class PaymentController {
                     sourceAvailableFunds, amount);
         }
 
-        accountClient.updateBalance(from, source.getBalance() - amount);
-        accountClient.updateBalance(to, target.getBalance() + amount);
+        accountClient.updateBalance(fromId, source.getBalance() - amount);
+        accountClient.updateBalance(toId, target.getBalance() + amount);
 
-        return "Success, transferred " + amount + " from ID " + from + " to ID " + to;
+        return "Success, transferred " + amount + " from ID " + fromId + " to ID " + toId;
     }
 
-    @GetMapping("/deposit")
+    @PostMapping("/deposit")
     public String deposit(@RequestParam int id, @RequestParam double amount) {
         AccountDTO acc = accountClient.getAccount(id);
         if (acc == null) return "Error: account not found";
@@ -47,7 +47,7 @@ public class PaymentController {
         return "Successfully deposited " + amount + ". New balance: " + newBalance;
     }
 
-    @GetMapping("/withdraw")
+    @PostMapping("/withdraw")
     public String withdraw(@RequestParam int id, @RequestParam double amount) {
         AccountDTO acc = accountClient.getAccount(id);
         if (acc == null) return "Error: account not found";
@@ -68,11 +68,9 @@ public class PaymentController {
     @GetMapping("/account-info/{id}")
     public String getAccountInfo(@PathVariable int id) {
         AccountDTO acc = accountClient.getAccount(id);
-
         if (acc == null) return "Error: account not found";
 
         double total = acc.getBalance() + (acc.getCreditLimit() != null ? acc.getCreditLimit() : 0);
-
         return String.format("Balance: %.2f | Limit: %.2f", acc.getBalance(), total);
     }
 }
