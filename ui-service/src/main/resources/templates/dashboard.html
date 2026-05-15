@@ -9,8 +9,8 @@
 <body>
 
 <header>
-    <h1>💎 Yahodzinska Global Finance</h1>
-    <p>Мікросервісна банківська система — ШІ-14</p>
+    <h1>Yahodzinska Global Finance</h1>
+    <p>найкращий та наймодніший банк</p>
 </header>
 
 <div class="container">
@@ -40,10 +40,10 @@
             </div>
 
             <div class="card">
-                <h3>💳 Новий Рахунок</h3>
+                <h3>💳 Новий рахунок</h3>
                 <form th:action="@{/bank/accounts/create}" method="post" class="input-group">
                     <input type="number" name="clientId" placeholder="ID власника" required>
-                    <input type="number" step="0.01" name="balance" placeholder="Початковий баланс ($)" required>
+                    <input type="number" step="0.01" name="balance" placeholder="Початковий баланс (грн)" required>
 
                     <select name="type" required style="padding: 12px; border-radius: 8px; margin-bottom: 10px; background: #1e293b; color: white; border: 1px solid #334155; font-family: 'Inter', sans-serif;">
                         <option value="" disabled selected>Оберіть тип рахунку</option>
@@ -51,7 +51,7 @@
                         <option value="CREDIT">Кредитний (Credit)</option>
                     </select>
 
-                    <input type="number" step="0.01" name="creditLimit" placeholder="Кредитний ліміт (для Credit)" value="0">
+                    <input type="number" step="0.01" name="creditLimit" placeholder="Кредитний ліміт" value="0">
 
                     <button type="submit" style="background: var(--success); color: #0f172a; font-weight: 800;">Активувати</button>
                 </form>
@@ -91,7 +91,7 @@
         <form th:action="@{/bank/transfer}" method="post" style="display: flex; gap: 10px; flex-wrap: wrap;">
             <input type="number" name="fromId" placeholder="ID відправника" required style="flex: 1; min-width: 120px;">
             <input type="number" name="toId" placeholder="ID отримувача" required style="flex: 1; min-width: 120px;">
-            <input type="number" step="0.01" name="amount" placeholder="Сума ($)" required style="flex: 1; min-width: 120px;">
+            <input type="number" step="0.01" name="amount" placeholder="Сума (грн)" required style="flex: 1; min-width: 120px;">
             <button type="submit" style="background: var(--success); color: #0f172a; font-weight: bold; padding: 10px 25px;">Надіслати</button>
         </form>
 
@@ -105,7 +105,7 @@
 </div>
 
 <footer style="text-align: center; margin-top: 40px; color: #64748b; font-size: 0.8rem;">
-    <p>&copy; 2026 Yahodzinska Digital Systems. Distributed Architecture Lab.</p>
+    <p>&copy; Саша - пушечка, поставте, будь ласка, максимум, вона старалась дуже сильно :)</p>
 </footer>
 
 </body>
