@@ -26,4 +26,7 @@ public interface AccountClient {
 
     @PostMapping("/accounts")
     void createAccount(@RequestBody AccountDTO account);
+
+    @GetMapping("/accounts")
+    List<AccountDTO> getAllAccounts();
 }

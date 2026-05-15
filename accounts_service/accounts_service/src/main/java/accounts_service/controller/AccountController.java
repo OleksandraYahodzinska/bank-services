@@ -76,10 +76,15 @@ public class AccountController {
 
     @PostMapping
     public void createAccount(@RequestBody AccountDTO dto) {
-        if ("SAVINGS".equals(dto.getType())) {
+        System.out.println("Спроба створення рахунку для клієнта: " + dto.getClientId());
+
+        if (dto.getType() != null && dto.getType().equalsIgnoreCase("SAVINGS")) {
             bankService.createSavings(dto.getClientId(), dto.getBalance());
+            System.out.println("Створено SAVINGS рахунок");
         } else {
-            bankService.createCredit(dto.getClientId(), dto.getBalance(), dto.getCreditLimit());
+            double limit = (dto.getCreditLimit() != null) ? dto.getCreditLimit() : 0.0;
+            bankService.createCredit(dto.getClientId(), dto.getBalance(), limit);
+            System.out.println("Створено CREDIT рахунок з лімітом: " + limit);
         }
     }
 

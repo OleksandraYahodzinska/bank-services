@@ -10,7 +10,7 @@
 
 <header>
     <h1>💎 Yahodzinska Global Finance</h1>
-    <p>Мікросервісна банківська система</p>
+    <p>Мікросервісна банківська система — ШІ-14</p>
 </header>
 
 <div class="container">
@@ -32,18 +32,28 @@
             <div class="card">
                 <h3>👤 Новий Клієнт</h3>
                 <form th:action="@{/bank/clients/create}" method="post" class="input-group">
-                    <input type="number" name="id" placeholder="ID" required>
+                    <input type="number" name="id" placeholder="ID (напр. 101)" required>
                     <input type="text" name="name" placeholder="Ім'я" required>
                     <input type="text" name="surname" placeholder="Прізвище" required>
                     <button type="submit">Створити</button>
                 </form>
             </div>
+
             <div class="card">
                 <h3>💳 Новий Рахунок</h3>
                 <form th:action="@{/bank/accounts/create}" method="post" class="input-group">
                     <input type="number" name="clientId" placeholder="ID власника" required>
-                    <input type="number" step="0.01" name="balance" placeholder="Сума ($)" required>
-                    <button type="submit" style="background: var(--success);">Активувати</button>
+                    <input type="number" step="0.01" name="balance" placeholder="Початковий баланс ($)" required>
+
+                    <select name="type" required style="padding: 12px; border-radius: 8px; margin-bottom: 10px; background: #1e293b; color: white; border: 1px solid #334155; font-family: 'Inter', sans-serif;">
+                        <option value="" disabled selected>Оберіть тип рахунку</option>
+                        <option value="SAVINGS">Ощадний (Savings)</option>
+                        <option value="CREDIT">Кредитний (Credit)</option>
+                    </select>
+
+                    <input type="number" step="0.01" name="creditLimit" placeholder="Кредитний ліміт (для Credit)" value="0">
+
+                    <button type="submit" style="background: var(--success); color: #0f172a; font-weight: 800;">Активувати</button>
                 </form>
             </div>
         </div>
@@ -77,15 +87,26 @@
     </div>
 
     <div class="card" style="margin-top: 30px; background: #0f172a; color: white;">
-        <h3 style="color: var(--success);">💸 Переказ</h3>
-        <form th:action="@{/bank/transfer}" method="post" style="display: flex; gap: 10px;">
-            <input type="number" name="fromId" placeholder="Від кого ID" required>
-            <input type="number" name="toId" placeholder="Кому ID" required>
-            <input type="number" step="0.01" name="amount" placeholder="Сума" required>
-            <button type="submit" style="background: var(--success); color: #0f172a;">Надіслати</button>
+        <h3 style="color: var(--success);">💸 Швидкий Переказ</h3>
+        <form th:action="@{/bank/transfer}" method="post" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <input type="number" name="fromId" placeholder="ID відправника" required style="flex: 1; min-width: 120px;">
+            <input type="number" name="toId" placeholder="ID отримувача" required style="flex: 1; min-width: 120px;">
+            <input type="number" step="0.01" name="amount" placeholder="Сума ($)" required style="flex: 1; min-width: 120px;">
+            <button type="submit" style="background: var(--success); color: #0f172a; font-weight: bold; padding: 10px 25px;">Надіслати</button>
         </form>
-        <div th:if="${message}" class="message" th:text="${message}"></div>
+
+        <div th:if="${message}"
+             style="margin-top: 15px; padding: 10px; border-radius: 8px; text-align: center; font-weight: 600;"
+             th:classappend="${#strings.contains(message, 'Error') ? 'badge-danger' : 'badge-savings'}"
+             th:text="${message}">
+        </div>
     </div>
+
 </div>
+
+<footer style="text-align: center; margin-top: 40px; color: #64748b; font-size: 0.8rem;">
+    <p>&copy; 2026 Yahodzinska Digital Systems. Distributed Architecture Lab.</p>
+</footer>
+
 </body>
 </html>
