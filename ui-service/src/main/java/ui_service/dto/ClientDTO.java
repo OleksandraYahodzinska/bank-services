@@ -4,7 +4,7 @@ public class ClientDTO {
     private int id;
     private String name;
     private String surname;
-    private Double balance;      
+    private Double balance;
     private String accountType;
 
     public ClientDTO() {}
